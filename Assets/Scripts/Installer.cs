@@ -8,13 +8,17 @@ using Eat.Factory.Interface;
 using Eat.Pool;
 using Eat.View;
 using Manager;
+using UI;
 using UnityEngine;
 using Zenject;
 
 public class Installer : MonoInstaller
 {
-    [SerializeField] BugConfig workerConfig;
-    //[SerializeField] BugConfig predatorConfig;
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private Hud hudPrefab;
+    
+    [SerializeField] private BugConfig workerConfig;
+    //[SerializeField] private BugConfig predatorConfig;
     [SerializeField] private BugView bugPrefab;
     [SerializeField] private EatView eatPrefab;
     
@@ -26,6 +30,7 @@ public class Installer : MonoInstaller
         Container.BindInstance(workerConfig).WhenInjectedInto<BugFactory>();
         //Container.BindInstance(predatorConfig).WhenInjectedInto<BugFactory>();
 
+        Container.Bind<Stats.Stats>().AsSingle();
         Container.Bind<LifetimeSystem>().AsSingle();
         Container.Bind<IBugFactory>().To<BugFactory>().AsSingle();
         Container.Bind<IEatFactory>().To<EatFactory>().AsSingle();
@@ -35,5 +40,11 @@ public class Installer : MonoInstaller
 
         Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
         Container.BindInterfacesAndSelfTo<EatSpawner>().AsSingle();
+
+        Container.Bind<Hud>()
+            .FromComponentInNewPrefab(hudPrefab)
+            .UnderTransform(canvas.transform)
+            .AsSingle()
+            .NonLazy();
     }
 }

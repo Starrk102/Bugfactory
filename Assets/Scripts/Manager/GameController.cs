@@ -16,13 +16,15 @@ namespace Manager
         public List<Bug.Bug> toAdd = new();
         public List<Bug.Bug> toRemove = new();
         private IBugFactory factory;
-
+        private Stats.Stats stats;
+        
         private CancellationTokenSource cts;
 
         [Inject]
-        public GameController(IBugFactory factory)
+        public GameController(IBugFactory factory, Stats.Stats stats)
         {
             this.factory = factory;
+            this.stats = stats;
         }
     
         public void Initialize()
@@ -87,6 +89,7 @@ namespace Manager
         
         private void OnBugDied(Bug.Bug bug)
         {
+            stats.OnBugDied(bug);
             toRemove.Add(bug);
         }
     
